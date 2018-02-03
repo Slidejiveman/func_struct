@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <stdbool.h>
 #include <unistd.h>
 
 #define DEBUG
 #define NUM_FUNCS 200 // number of functions possible
-#define NUM_AVAIL 20  // number of functions implemented by customer
 
 /* thread function declarations */ 
+// These functions could be expanded to do
+// any behavior. Adding sleep to them would
+// be a good simulation of the performance
+// of different methods.
 void *func0() { printf("func0\n"); }
 void *func1() { printf("func1\n"); }
 void *func2() { printf("func2\n"); }
@@ -243,10 +245,7 @@ typedef struct _func_map {
 } Func_map;
 
 /* global variables  */
-int COMMAND_SET[NUM_AVAIL] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
-                       10, 11, 12, 13, 14, 15, 16,
-                       17, 18, 19 };
-
+// emulates the hardware interrupt vector as a key to function map
 Func_map INTERRUPT_VECTOR[NUM_FUNCS] = { { 0, func0 }, { 1, func1 }, { 2, func2 }, { 3, func3 },  
                                          { 4, func4 }, { 5, func5 }, { 6, func6 }, { 7, func7 },
                                          { 8, func8 }, { 9, func9 }, { 10, func10 }, { 11, func11 },
@@ -305,28 +304,28 @@ Func_map INTERRUPT_VECTOR[NUM_FUNCS] = { { 0, func0 }, { 1, func1 }, { 2, func2 
 // Main initializes 20 threads by incrementing
 // over the command set, which are the functions
 // chosen to be implemented by the customer.
-int main(int argc, char **argv) // arguments for command set after 
+int main(int argc, char *argv[]) 
 {
     // local variables 
     int i, rc;
  
     // loop over the command set, and create pthreads to run 
     // for each enabled function.
-    for (i = 0; i < NUM_AVAIL; ++i) 
+    for (i = 1; i < argc; ++i) // program name counts as an argument
     {
 #ifndef DEBUG
         sleep(1);
 #endif
-        if ((rc =  pthread_create(&INTERRUPT_VECTOR[COMMAND_SET[i]].thread, NULL, INTERRUPT_VECTOR[COMMAND_SET[i]].func , NULL)))
+        if ((rc =  pthread_create(&INTERRUPT_VECTOR[atoi(argv[i])].thread, NULL, INTERRUPT_VECTOR[atoi(argv[i])].func , NULL)))
         {
-            fprintf(stderr, "error creating thread # %d\n", INTERRUPT_VECTOR[COMMAND_SET[i]].ptid);
+            fprintf(stderr, "error creating thread # %d\n", INTERRUPT_VECTOR[atoi(argv[i])].ptid);
             return EXIT_FAILURE;
         } 
     }
 
-    for (i = 0; i < NUM_AVAIL; ++i)
+    for (i = 1; i < argc; ++i)
     {
-        pthread_join(INTERRUPT_VECTOR[COMMAND_SET[i]].thread, NULL);
+        pthread_join(INTERRUPT_VECTOR[atoi(argv[i])].thread, NULL);
     } 
  
     return EXIT_SUCCESS;

@@ -232,45 +232,85 @@ void *func199() { printf("func199\n"); }
 /* type definitions  */
 // function pointer arrays have messy syntax
 // this typedef helps to make things cleaner
-typedef int (*Func_ptr_t)();
+typedef void* (*Func_ptr_t)();
 
 // the function map is a mapping of threads
 // to the functions that they run
 typedef struct _func_map {
-    int ptid[NUM_FUNCS];
-    pthread_t threads[NUM_FUNCS];
-    Func_ptr_t funcs[NUM_FUNCS];
+    int ptid; 
+    Func_ptr_t func;
+    pthread_t thread;
 } Func_map;
 
 /* global variables  */
-int COMMAND_SET[NUM_AVAIL] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+int COMMAND_SET[NUM_AVAIL] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
                        10, 11, 12, 13, 14, 15, 16,
                        17, 18, 19 };
 
+Func_map interrupt_vector[NUM_FUNCS] = { { 0, func0 }, { 1, func1 }, { 2, func2 }, { 3, func3 },  
+                                         { 4, func4 }, { 5, func5 }, { 6, func6 }, { 7, func7 },
+                                         { 8, func8 }, { 9, func9 }, { 10, func10 }, { 11, func11 },
+                                         { 12, func12 }, { 13, func13 }, { 14, func14 }, { 15, func15 },
+                                         { 16, func16 }, { 17, func17 }, { 18, func18 }, { 19, func19 },
+                                         { 20, func20 }, { 21, func21 }, { 22, func22 }, { 23, func23 },
+                                         { 24, func24 }, { 25, func25 }, { 26, func26 }, { 27, func27 },
+                                         { 28, func28 }, { 29, func29 }, { 30, func30 }, { 31, func31 },
+                                         { 32, func32 }, { 33, func33 }, { 34, func34 }, { 35, func35 },
+                                         { 36, func36 }, { 37, func37 }, { 38, func38 }, { 39, func39 },
+                                         { 40, func40 }, { 41, func41 }, { 42, func42 }, { 43, func43 },
+                                         { 44, func44 }, { 45, func45 }, { 46, func46 }, { 47, func47 },
+                                         { 48, func48 }, { 49, func49 }, { 50, func50 }, { 51, func51 },
+                                         { 52, func52 }, { 53, func53 }, { 54, func54 }, { 55, func55 },
+                                         { 56, func56 }, { 57, func57 }, { 58, func58 }, { 59, func59 },
+                                         { 60, func60 }, { 61, func61 }, { 62, func62 }, { 63, func63 },
+                                         { 64, func64 }, { 65, func65 }, { 66, func66 }, { 67, func67 },
+                                         { 68, func68 }, { 69, func69 }, { 70, func70 }, { 71, func71 },
+                                         { 72, func72 }, { 73, func73 }, { 74, func74 }, { 75, func75 },
+                                         { 76, func76 }, { 77, func77 }, { 78, func78 }, { 79, func79 },
+                                         { 80, func80 }, { 81, func81 }, { 82, func82 }, { 83, func83 },
+                                         { 84, func84 }, { 85, func85 }, { 86, func86 }, { 87, func87 },
+                                         { 88, func88 }, { 89, func89 }, { 90, func90 }, { 91, func91 },
+                                         { 92, func92 }, { 93, func93 }, { 94, func94 }, { 95, func95 },
+                                         { 96, func96 }, { 97, func97 }, { 98, func98 }, { 99, func99 },
+                                         { 100, func100 }, { 101, func101 }, { 102, func102 }, { 103, func103 },
+                                         { 104, func104 }, { 105, func105 }, { 106, func106 }, { 107, func107 },
+                                         { 108, func108 }, { 109, func109 }, { 110, func110 }, { 111, func111 },
+                                         { 112, func112 }, { 113, func113 }, { 114, func114 }, { 115, func115 },
+                                         { 116, func116 }, { 117, func117 }, { 118, func118 }, { 119, func119 },
+                                         { 120, func120 }, { 121, func121 }, { 122, func122 }, { 123, func123 },
+                                         { 124, func124 }, { 125, func125 }, { 126, func126 }, { 127, func127 },
+                                         { 128, func128 }, { 129, func129 }, { 130, func130 }, { 131, func131 },
+                                         { 132, func132 }, { 133, func133 }, { 134, func134 }, { 135, func135 },
+                                         { 136, func136 }, { 137, func137 }, { 138, func138 }, { 139, func139 },
+                                         { 140, func140 }, { 141, func141 }, { 142, func142 }, { 143, func143 },
+                                         { 144, func144 }, { 145, func145 }, { 146, func146 }, { 147, func147 },
+                                         { 148, func148 }, { 149, func149 }, { 150, func150 }, { 151, func151 },
+                                         { 152, func152 }, { 153, func153 }, { 154, func154 }, { 155, func155 },
+                                         { 156, func156 }, { 157, func157 }, { 158, func158 }, { 159, func159 },
+                                         { 160, func160 }, { 161, func161 }, { 162, func162 }, { 163, func163 },
+                                         { 164, func164 }, { 165, func165 }, { 166, func166 }, { 167, func167 },
+                                         { 168, func168 }, { 169, func169 }, { 170, func170 }, { 171, func171 },
+                                         { 172, func172 }, { 173, func173 }, { 174, func174 }, { 175, func175 },
+                                         { 176, func176 }, { 177, func177 }, { 178, func178 }, { 179, func179 },
+                                         { 180, func180 }, { 181, func181 }, { 182, func182 }, { 183, func183 },
+                                         { 184, func184 }, { 185, func185 }, { 186, func186 }, { 187, func187 },
+                                         { 188, func188 }, { 189, func189 }, { 190, func190 }, { 191, func191 },
+                                         { 192, func192 }, { 193, func193 }, { 194, func194 }, { 195, func195 },
+                                         { 196, func196 }, { 197, func197 }, { 198, func198 }, { 199, func199 }
+                                       };
+
 /* helper functions  */
-void init_func_map(Func_map *map)
-{
-    for (int i = 0; i < NUM_FUNCS; ++i) 
-    {
-        map->ptid[i] = i;
-        // initialize other pointers to functions
-    }
-}
 
 /* processing  */
 // Main initializes 20 threads by incrementing
 // over the command set, which are the functions
 // chosen to be implemented by the customer.
-int main() 
+int main(int argc, char **argv) // arguments for command set after 
 {
     // local variables
-    Func_map *function_map_ptr = (Func_map*) malloc(sizeof(Func_map));
-    Func_ptr_t *function_ptr = (Func_ptr_t*) malloc(sizeof(Func_ptr_t) * NUM_FUNCS);
+   /* Func_map *function_map_ptr = (Func_map*) malloc(sizeof(Func_map));
     int rc;
  
-    // initialize function map!!
-    init_func_map(function_map_ptr);    
-
     // loop over the command set, and create pthreads to run 
     // for each enabled function.
     for (int i = 0; i < NUM_AVAIL; ++i) 
@@ -288,7 +328,7 @@ int main()
     for (int i = 0; i < NUM_AVAIL; ++i)
     {
         pthread_join(function_map_ptr->threads[COMMAND_SET[i]], NULL);
-    }
+    } */
  
     return EXIT_SUCCESS;
 }

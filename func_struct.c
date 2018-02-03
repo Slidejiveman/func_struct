@@ -247,7 +247,7 @@ int COMMAND_SET[NUM_AVAIL] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                        10, 11, 12, 13, 14, 15, 16,
                        17, 18, 19 };
 
-Func_map interrupt_vector[NUM_FUNCS] = { { 0, func0 }, { 1, func1 }, { 2, func2 }, { 3, func3 },  
+Func_map INTERRUPT_VECTOR[NUM_FUNCS] = { { 0, func0 }, { 1, func1 }, { 2, func2 }, { 3, func3 },  
                                          { 4, func4 }, { 5, func5 }, { 6, func6 }, { 7, func7 },
                                          { 8, func8 }, { 9, func9 }, { 10, func10 }, { 11, func11 },
                                          { 12, func12 }, { 13, func13 }, { 14, func14 }, { 15, func15 },
@@ -307,28 +307,27 @@ Func_map interrupt_vector[NUM_FUNCS] = { { 0, func0 }, { 1, func1 }, { 2, func2 
 // chosen to be implemented by the customer.
 int main(int argc, char **argv) // arguments for command set after 
 {
-    // local variables
-   /* Func_map *function_map_ptr = (Func_map*) malloc(sizeof(Func_map));
-    int rc;
+    // local variables 
+    int i, rc;
  
     // loop over the command set, and create pthreads to run 
     // for each enabled function.
-    for (int i = 0; i < NUM_AVAIL; ++i) 
+    for (i = 0; i < NUM_AVAIL; ++i) 
     {
 #ifndef DEBUG
         sleep(1);
 #endif
-        if ((rc =  pthread_create(&function_map_ptr->threads[COMMAND_SET[i]], NULL, func1, NULL)))
+        if ((rc =  pthread_create(&INTERRUPT_VECTOR[COMMAND_SET[i]].thread, NULL, INTERRUPT_VECTOR[COMMAND_SET[i]].func , NULL)))
         {
-            fprintf(stderr, "error creating thread # %d\n", function_map_ptr->ptid[COMMAND_SET[i]]);
+            fprintf(stderr, "error creating thread # %d\n", INTERRUPT_VECTOR[COMMAND_SET[i]].ptid);
             return EXIT_FAILURE;
         } 
     }
 
-    for (int i = 0; i < NUM_AVAIL; ++i)
+    for (i = 0; i < NUM_AVAIL; ++i)
     {
-        pthread_join(function_map_ptr->threads[COMMAND_SET[i]], NULL);
-    } */
+        pthread_join(INTERRUPT_VECTOR[COMMAND_SET[i]].thread, NULL);
+    } 
  
     return EXIT_SUCCESS;
 }
